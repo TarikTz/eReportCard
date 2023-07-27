@@ -1,0 +1,42 @@
+version: "3"
+services:
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    volumes:
+      - ./webapp:/app
+      - /app/node_modules
+    ports:
+      - 8080:8080
+    command: npm run serve
+    networks:
+      - reportnetwork
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/go/src/app
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
+    command: go run main.go
+    networks:
+      - reportnetwork
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - 3306:3306
+    networks:
+      - reportnetwork
+
+networks:
+  reportnetwork:
+    driver: bridge
