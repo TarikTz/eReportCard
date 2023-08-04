@@ -7,8 +7,14 @@ import App from "./App.vue";
 import router from "./router";
 
 const app = createApp(App);
+const pinia = createPinia();
 
-app.use(createPinia());
-app.use(router);
+import axios from "./plugins/axios";
 
-app.mount("#app");
+app
+  .use(router)
+  .use(pinia)
+  .use(axios, {
+    baseUrl: "https://vault.immudb.io/ics/api/v1/",
+  })
+  .mount("#app");
